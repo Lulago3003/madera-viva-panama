@@ -39,7 +39,7 @@ export default function Home() {
   const [finish, setFinish] = useState("Natural satinado");
   const [resin, setResin] = useState("Sin resina");
   const [edge, setEdge] = useState("Canto vivo");
-  const [photo, setPhoto] = useState<{ name: string; url: string } | null>(null);
+  const [photo, setPhoto] = useState<{ name: string; url: string; file: File } | null>(null);
 
   const measureLabel = useMemo(() => (unit === "cm" ? "cm" : "pulgadas"), [unit]);
   const visualWidth = useMemo(() => {
@@ -57,10 +57,10 @@ export default function Home() {
     const file = event.target.files?.[0];
     if (!file) return;
     if (photo) URL.revokeObjectURL(photo.url);
-    setPhoto({ name: file.name, url: URL.createObjectURL(file) });
+    setPhoto({ name: file.name, url: URL.createObjectURL(file), file });
   };
 
-  const sendQuote = (event: FormEvent<HTMLFormElement>) => {
+  const sendQuote = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const message = [
       "Hola, quiero cotizar un proyecto personalizado.",
@@ -70,11 +70,19 @@ export default function Home() {
       `Uso/personas: ${form.personas}`,
       `Acabado: ${finish}; ${edge}; ${resin}.`,
       form.detalle ? `Idea y detalles: ${form.detalle}` : "",
-      photo ? "Tengo una foto de inspiración y la adjuntaré en este chat." : "",
     ]
       .filter(Boolean)
       .join("\n");
-    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    if (photo && navigator.canShare?.({ files: [photo.file] })) {
+      try {
+        await navigator.share({ title: "Cotización Madera Viva", text: message, files: [photo.file] });
+        return;
+      } catch (error) {
+        if ((error as Error).name === "AbortError") return;
+      }
+    }
+    const fallback = photo ? `${message}\n\nAdjuntaré una foto de inspiración en este chat.` : message;
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(fallback)}`, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -218,7 +226,7 @@ export default function Home() {
               {photo && <div className="photo-preview"><img src={photo.url} alt="Foto de inspiración seleccionada" /><button type="button" onClick={() => { URL.revokeObjectURL(photo.url); setPhoto(null); }}>Quitar</button></div>}
             </div>
             <button className="button button-accent submit" type="submit">Enviar por WhatsApp <span aria-hidden="true">↗</span></button>
-            <p className="privacy">Se abrirá WhatsApp con todas las especificaciones. Si agregaste una foto, solo adjúntala en el chat para enviarla junto con el diseño.</p>
+            <p className="privacy">En celular, si agregaste una foto, se abrirá el menú para compartirla junto con la cotización: elige WhatsApp. En computadora se abrirá el mensaje listo.</p>
           </form>
         </div>
       </section>
