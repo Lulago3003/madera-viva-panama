@@ -3,6 +3,8 @@
 import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 
 const WHATSAPP = "50769283203";
+const CLOUDINARY_CLOUD = "t6ksj0dx";
+const CLOUDINARY_PRESET = "madera_viva_clientes";
 
 const projects = [
   {
@@ -40,6 +42,7 @@ export default function Home() {
   const [resin, setResin] = useState("Sin resina");
   const [edge, setEdge] = useState("Canto vivo");
   const [photo, setPhoto] = useState<{ name: string; url: string; file: File } | null>(null);
+  const [isSending, setIsSending] = useState(false);
 
   const measureLabel = useMemo(() => (unit === "cm" ? "cm" : "pulgadas"), [unit]);
   const visualWidth = useMemo(() => {
@@ -62,6 +65,20 @@ export default function Home() {
 
   const sendQuote = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const whatsappWindow = window.open("", "_blank");
+    setIsSending(true);
+    let photoUrl = "";
+    try {
+      if (photo) {
+        const payload = new FormData();
+        payload.append("file", photo.file);
+        payload.append("upload_preset", CLOUDINARY_PRESET);
+        payload.append("folder", "madera-viva-clientes");
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: "POST", body: payload });
+        const result = await response.json();
+        if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "No se pudo subir la foto");
+        photoUrl = result.secure_url;
+      }
     const message = [
       "Hola, quiero cotizar un proyecto personalizado.",
       form.nombre ? `Mi nombre es ${form.nombre}.` : "",
@@ -70,19 +87,19 @@ export default function Home() {
       `Uso/personas: ${form.personas}`,
       `Acabado: ${finish}; ${edge}; ${resin}.`,
       form.detalle ? `Idea y detalles: ${form.detalle}` : "",
+      photoUrl ? `Foto de inspiración: ${photoUrl}` : "",
     ]
       .filter(Boolean)
       .join("\n");
-    if (photo && navigator.canShare?.({ files: [photo.file] })) {
-      try {
-        await navigator.share({ title: "Cotización Madera Viva", text: message, files: [photo.file] });
-        return;
-      } catch (error) {
-        if ((error as Error).name === "AbortError") return;
-      }
+      const destination = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
+      if (whatsappWindow) whatsappWindow.location.assign(destination);
+      else window.location.assign(destination);
+    } catch (error) {
+      whatsappWindow?.close();
+      window.alert(`No se pudo subir la foto. ${error instanceof Error ? error.message : "Inténtalo de nuevo."}`);
+    } finally {
+      setIsSending(false);
     }
-    const fallback = photo ? `${message}\n\nAdjuntaré una foto de inspiración en este chat.` : message;
-    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(fallback)}`, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -225,8 +242,8 @@ export default function Home() {
               <label htmlFor="inspiration" className="upload-label"><span className="upload-icon">+</span><span><b>{photo ? "Foto añadida" : "Añade una foto de inspiración"}</b><small>{photo ? photo.name : "JPG o PNG · queda privada en tu dispositivo"}</small></span></label>
               {photo && <div className="photo-preview"><img src={photo.url} alt="Foto de inspiración seleccionada" /><button type="button" onClick={() => { URL.revokeObjectURL(photo.url); setPhoto(null); }}>Quitar</button></div>}
             </div>
-            <button className="button button-accent submit" type="submit">Enviar por WhatsApp <span aria-hidden="true">↗</span></button>
-            <p className="privacy">En celular, si agregaste una foto, se abrirá el menú para compartirla junto con la cotización: elige WhatsApp. En computadora se abrirá el mensaje listo.</p>
+            <button className="button button-accent submit" type="submit" disabled={isSending}>{isSending ? "Subiendo foto…" : "Enviar por WhatsApp"} <span aria-hidden="true">↗</span></button>
+            <p className="privacy">La foto se sube antes de abrir WhatsApp y se envía como enlace directo junto con tu cotización.</p>
           </form>
         </div>
       </section>
