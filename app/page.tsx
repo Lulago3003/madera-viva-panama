@@ -82,7 +82,7 @@ export default function Home() {
       <section className="hero" id="inicio">
         <nav className="nav shell" aria-label="Navegación principal">
           <a className="brand" href="#inicio" aria-label="Madera Viva, inicio">
-            <span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>
+            <span className="brand-mark logo-mark" aria-hidden="true"><img src="/madera-viva-mark.png" alt="" /></span>
             <span>MADERA <b>VIVA</b></span>
           </a>
           <div className="nav-links">
@@ -224,7 +224,7 @@ export default function Home() {
       </section>
 
       <footer className="footer shell">
-        <a className="brand" href="#inicio"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>MADERA <b>VIVA</b></span></a>
+        <a className="brand" href="#inicio"><span className="brand-mark logo-mark" aria-hidden="true"><img src="/madera-viva-mark.png" alt="" /></span><span>MADERA <b>VIVA</b></span></a>
         <p>Carpintería artesanal a medida.<br />Panamá.</p>
         <a className="footer-contact" href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer">+507 6928-3203 <span>↗</span></a>
       </footer>
