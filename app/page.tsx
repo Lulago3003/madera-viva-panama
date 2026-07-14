@@ -94,16 +94,18 @@ export default function Home() {
             WhatsApp <span aria-hidden="true">↗</span>
           </a>
         </nav>
+        <div className="ad-strip shell"><span className="ad-dot" /> ¿Vienes desde Marketplace o Instagram? Diseña tu pieza y recibe una orientación por WhatsApp.</div>
 
         <div className="hero-grid shell">
           <div className="hero-copy">
-            <p className="eyebrow">CARPINTERÍA ARTESANAL · PANAMÁ</p>
-            <h1>La madera tiene<br /><em>una historia.</em></h1>
-            <p className="lede">La transformamos en una pieza que será parte de la tuya. Mesas y muebles hechos a medida, desde la selección de la madera hasta el último acabado.</p>
+            <p className="eyebrow">MESAS A MEDIDA · PANAMÁ</p>
+            <h1>Diseña una mesa<br /><em>hecha para ti.</em></h1>
+            <p className="lede">Elige las medidas, prueba acabados y cuéntanos tu idea. Creamos tu pieza a mano, con madera real y atención personal de principio a fin.</p>
             <div className="hero-actions">
-              <a className="button button-accent" href="#cotiza">Crea tu pieza <span aria-hidden="true">↓</span></a>
-              <a className="text-link" href="#proyectos">Ver trabajos <span aria-hidden="true">→</span></a>
+              <a className="button button-accent" href="#cotiza">Diseña en 2 min <span aria-hidden="true">↓</span></a>
+              <a className="text-link" href="#proyectos">Ver mesas reales <span aria-hidden="true">→</span></a>
             </div>
+            <div className="trust-row"><span>✦ Hecho a mano</span><span>✦ A tu medida</span><span>✦ Atención por WhatsApp</span></div>
           </div>
           <div className="hero-art">
             <div className="hero-image-wrap">
@@ -127,6 +129,16 @@ export default function Home() {
         </div>
         <div className="intro-stamp" aria-label="Trabajo artesanal">
           <span>HECHO</span><b>A MANO</b><span>DESDE PANAMÁ</span>
+        </div>
+      </section>
+
+      <section className="conversion shell" aria-label="Cómo cotizar">
+        <div className="section-kicker"><span>EN 3 PASOS</span> TU IDEA SE HACE REAL</div>
+        <div className="conversion-grid">
+          <article><b>1</b><h3>Diseña</h3><p>Elige el tipo de pieza, las medidas y los detalles que imaginas.</p></article>
+          <article><b>2</b><h3>Comparte</h3><p>Envía la solicitud por WhatsApp, con una foto de referencia si la tienes.</p></article>
+          <article><b>3</b><h3>Hablamos</h3><p>Recibe orientación personal para definir una pieza posible y especial.</p></article>
+          <a className="button button-dark" href="#cotiza">Empezar mi diseño <span aria-hidden="true">→</span></a>
         </div>
       </section>
 
@@ -216,6 +228,7 @@ export default function Home() {
         <p>Carpintería artesanal a medida.<br />Panamá.</p>
         <a className="footer-contact" href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer">+507 6928-3203 <span>↗</span></a>
       </footer>
+      <a className="whatsapp-float" href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hola, vengo desde la página de Madera Viva y quiero cotizar una mesa a medida.")}`} target="_blank" rel="noreferrer" aria-label="Escribir por WhatsApp"><span>◔</span><b>¿Hablamos?</b><small>WhatsApp</small></a>
     </main>
   );
 }
